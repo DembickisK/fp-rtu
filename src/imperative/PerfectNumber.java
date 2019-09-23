@@ -3,6 +3,8 @@ package imperative;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class PerfectNumber {
 
@@ -13,17 +15,18 @@ public class PerfectNumber {
     }
 
     public static STATE process(int n) {
-        int sum = divisors(n).stream().mapToInt(Integer::intValue).sum() - n;
+        int sum = IntStream
+                .range(1, n)
+                .filter(i -> n % i == 0)
+                .sum();
         return sum == n ? STATE.PERFECT : sum > n ? STATE.ABUNDANT : STATE.DEFICIENT;
     }
 
     public static Set<Integer> divisors(int n) {
-        Set<Integer> divs = new HashSet<>();
-        for(int i = 1; i <= n; i++) {
-            if (n % i == 0) {
-                divs.add(i);
-            }
-        }
-        return divs;
+        return IntStream
+                .range(1, (int)Math.sqrt(n))
+                .filter(i -> n % i == 0)
+                .boxed()
+                .collect(Collectors.toCollection(HashSet::new));
     }
 }
